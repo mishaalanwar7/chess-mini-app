@@ -1,0 +1,1149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Master - Telegram Mini App</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+            color: white;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        /* Welcome Screen */
+        .welcome-screen {
+            text-align: center;
+            padding-top: 50px;
+        }
+
+        .logo {
+            font-size: 48px;
+            margin-bottom: 20px;
+        }
+
+        .logo h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(45deg, #7fa650, #64b5f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            color: #aaa;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #7fa650, #8bc34a);
+            color: white;
+            border: none;
+            padding: 16px 32px;
+            font-size: 1.1rem;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            width: 100%;
+            margin: 10px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(127, 166, 80, 0.3);
+        }
+
+        .btn-secondary {
+            background: #2c2c3e;
+            border: 2px solid #444;
+        }
+
+        /* Auth Forms */
+        .auth-screen {
+            display: none;
+        }
+
+        .auth-card {
+            background: #2c2c3e;
+            border-radius: 16px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .auth-title {
+            text-align: center;
+            margin-bottom: 30px;
+            font-size: 1.8rem;
+            color: #7fa650;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #ccc;
+            font-weight: 500;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 14px;
+            background: #3a3a52;
+            border: 2px solid #444;
+            border-radius: 10px;
+            color: white;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #7fa650;
+        }
+
+        .error-message {
+            color: #ff6b6b;
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 20px;
+            color: #aaa;
+        }
+
+        .auth-footer a {
+            color: #7fa650;
+            cursor: pointer;
+            text-decoration: none;
+        }
+
+        /* Game Screen */
+        .game-screen {
+            display: none;
+        }
+
+        /* Header */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: #2c2c3e;
+            border-radius: 12px;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .username {
+            font-weight: 600;
+        }
+
+        .logout-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        /* Game Settings */
+        .game-settings {
+            background: #2c2c3e;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .setting-btn {
+            background: #3a3a52;
+            border: 2px solid #444;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .setting-btn:hover {
+            background: #4a4a62;
+            border-color: #7fa650;
+        }
+
+        .setting-btn.active {
+            background: #7fa650;
+            border-color: #7fa650;
+        }
+
+        /* Chess Board */
+        .board-container {
+            background: #2c2c3e;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+
+        .board {
+            display: grid;
+            grid-template-columns: repeat(8, 1fr);
+            grid-template-rows: repeat(8, 1fr);
+            width: 100%;
+            aspect-ratio: 1/1;
+            max-width: 400px;
+            margin: 0 auto;
+            border: 2px solid #444;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .square {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        .light {
+            background-color: #f0d9b5;
+        }
+
+        .dark {
+            background-color: #b58863;
+        }
+
+        .selected {
+            background-color: rgba(103, 155, 255, 0.7) !important;
+        }
+
+        .valid-move::after {
+            content: '';
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: rgba(0, 0, 0, 0.3);
+        }
+
+        .piece {
+            font-size: 28px;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+            z-index: 2;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .white {
+            color: white;
+        }
+
+        .black {
+            color: black;
+        }
+
+        /* Game Controls */
+        .game-controls {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .control-btn {
+            background: #3a3a52;
+            border: none;
+            color: white;
+            padding: 12px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .control-btn.primary {
+            background: #7fa650;
+        }
+
+        /* Game Status */
+        .game-status {
+            text-align: center;
+            margin: 15px 0;
+            font-size: 1.2rem;
+            color: #7fa650;
+            font-weight: 600;
+        }
+
+        /* Loading Spinner */
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .spinner {
+            border: 4px solid #3a3a52;
+            border-top: 4px solid #7fa650;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .auth-card {
+                padding: 20px;
+            }
+            
+            .settings-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .game-controls {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .piece {
+                font-size: 22px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="logo">
+                <h1>♔</h1>
+                <h1>Chess Master</h1>
+            </div>
+            <p class="tagline">Play chess like a grandmaster. Right in Telegram.</p>
+            <button class="btn" id="playNowBtn">Play Now</button>
+            <button class="btn btn-secondary" id="leaderboardBtn">View Leaderboard</button>
+        </div>
+
+        <!-- Login Screen -->
+        <div class="auth-screen" id="loginScreen">
+            <div class="auth-card">
+                <h2 class="auth-title">Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                        <div class="error-message" id="loginEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        <div class="error-message" id="loginPasswordError"></div>
+                    </div>
+                    <button type="submit" class="btn">Login</button>
+                </form>
+                <div class="auth-footer">
+                    Don't have an account? <a id="goToSignup">Sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Screen -->
+        <div class="auth-screen" id="signupScreen">
+            <div class="auth-card">
+                <h2 class="auth-title">Create Account</h2>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" placeholder="chess_player" required>
+                        <div class="error-message" id="signupUsernameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com" required>
+                        <div class="error-message" id="signupEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="••••••••" required>
+                        <div class="error-message" id="signupPasswordError"></div>
+                    </div>
+                    <button type="submit" class="btn">Create Account</button>
+                </form>
+                <div class="auth-footer">
+                    Already have an account? <a id="goToLogin">Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <!-- Header -->
+            <div class="header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div>
+                        <div class="username" id="username">User</div>
+                        <div style="font-size: 0.8rem; color: #aaa;">Rating: <span id="userRating">1500</span></div>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">Logout</button>
+            </div>
+
+            <!-- Game Settings -->
+            <div class="game-settings">
+                <h3 style="margin-bottom: 10px; color: #7fa650;">Game Settings</h3>
+                <div style="margin-bottom: 15px;">
+                    <div style="color: #ccc; margin-bottom: 8px;">Difficulty:</div>
+                    <div class="settings-grid">
+                        <button class="setting-btn active" data-difficulty="easy">Easy</button>
+                        <button class="setting-btn" data-difficulty="medium">Medium</button>
+                        <button class="setting-btn" data-difficulty="hard">Hard</button>
+                        <button class="setting-btn" data-difficulty="master">Master</button>
+                    </div>
+                </div>
+                <div>
+                    <div style="color: #ccc; margin-bottom: 8px;">Time Control:</div>
+                    <div class="settings-grid">
+                        <button class="setting-btn active" data-time="10">10 min</button>
+                        <button class="setting-btn" data-time="5">5 min</button>
+                        <button class="setting-btn" data-time="3">3 min</button>
+                        <button class="setting-btn" data-time="1">1 min</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chess Board -->
+            <div class="board-container">
+                <div class="board" id="chessboard">
+                    <!-- Board will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Game Status -->
+            <div class="game-status" id="gameStatus">White to move</div>
+
+            <!-- Loading -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>Thinking...</div>
+            </div>
+
+            <!-- Game Controls -->
+            <div class="game-controls">
+                <button class="control-btn" id="undoBtn">Undo</button>
+                <button class="control-btn primary" id="newGameBtn">New Game</button>
+                <button class="control-btn" id="resignBtn">Resign</button>
+            </div>
+        </div>
+
+        <div class="footer">
+            Chess Master © 2024 • Play chess in Telegram
+        </div>
+    </div>
+
+    <script>
+        // Telegram WebApp Integration
+        const tg = window.Telegram?.WebApp;
+        if (tg) {
+            tg.expand(); // Expand to full screen
+            tg.enableClosingConfirmation(); // Prevent accidental close
+            
+            // Set theme colors
+            tg.setHeaderColor('#1a1a2e');
+            tg.setBackgroundColor('#1a1a2e');
+        }
+
+        // Game state
+        let boardState = [];
+        let selectedPiece = null;
+        let validMoves = [];
+        let currentPlayer = 'white';
+        let gameOver = false;
+        let moveHistory = [];
+        let gameDifficulty = 'easy';
+        let gameTime = 600; // 10 minutes in seconds
+        let currentUser = null;
+
+        // API base URL (Update this with your Render URL)
+        const API_BASE_URL = 'https://your-app-name.onrender.com/api';
+
+        // DOM Elements
+        const welcomeScreen = document.getElementById('welcomeScreen');
+        const loginScreen = document.getElementById('loginScreen');
+        const signupScreen = document.getElementById('signupScreen');
+        const gameScreen = document.getElementById('gameScreen');
+        const playNowBtn = document.getElementById('playNowBtn');
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+        const goToSignup = document.getElementById('goToSignup');
+        const goToLogin = document.getElementById('goToLogin');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const chessboard = document.getElementById('chessboard');
+        const gameStatus = document.getElementById('gameStatus');
+        const newGameBtn = document.getElementById('newGameBtn');
+        const undoBtn = document.getElementById('undoBtn');
+        const resignBtn = document.getElementById('resignBtn');
+        const loading = document.getElementById('loading');
+        const username = document.getElementById('username');
+        const userRating = document.getElementById('userRating');
+        const userAvatar = document.getElementById('userAvatar');
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuth();
+            setupEventListeners();
+        });
+
+        // Check if user is logged in
+        async function checkAuth() {
+            const token = localStorage.getItem('chess_token');
+            const user = localStorage.getItem('chess_user');
+            
+            if (token && user) {
+                try {
+                    // Verify token with server
+                    const response = await fetch(`${API_BASE_URL}/verify`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    if (response.ok) {
+                        currentUser = JSON.parse(user);
+                        showGameScreen();
+                        setupPieces();
+                        renderBoard();
+                        updateUserInfo();
+                    } else {
+                        localStorage.removeItem('chess_token');
+                        localStorage.removeItem('chess_user');
+                        showWelcomeScreen();
+                    }
+                } catch (error) {
+                    console.error('Auth check failed:', error);
+                    showWelcomeScreen();
+                }
+            } else {
+                showWelcomeScreen();
+            }
+        }
+
+        // Show screens
+        function showWelcomeScreen() {
+            welcomeScreen.style.display = 'block';
+            loginScreen.style.display = 'none';
+            signupScreen.style.display = 'none';
+            gameScreen.style.display = 'none';
+        }
+
+        function showLoginScreen() {
+            welcomeScreen.style.display = 'none';
+            loginScreen.style.display = 'block';
+            signupScreen.style.display = 'none';
+            gameScreen.style.display = 'none';
+            clearErrors();
+        }
+
+        function showSignupScreen() {
+            welcomeScreen.style.display = 'none';
+            loginScreen.style.display = 'none';
+            signupScreen.style.display = 'block';
+            gameScreen.style.display = 'none';
+            clearErrors();
+        }
+
+        function showGameScreen() {
+            welcomeScreen.style.display = 'none';
+            loginScreen.style.display = 'none';
+            signupScreen.style.display = 'none';
+            gameScreen.style.display = 'block';
+        }
+
+        // Clear form errors
+        function clearErrors() {
+            document.querySelectorAll('.error-message').forEach(el => {
+                el.style.display = 'none';
+                el.textContent = '';
+            });
+        }
+
+        // Show error
+        function showError(elementId, message) {
+            const element = document.getElementById(elementId);
+            element.textContent = message;
+            element.style.display = 'block';
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Welcome screen
+            playNowBtn.addEventListener('click', showLoginScreen);
+            
+            // Auth navigation
+            goToSignup.addEventListener('click', showSignupScreen);
+            goToLogin.addEventListener('click', showLoginScreen);
+            
+            // Login form
+            loginForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await login(
+                    document.getElementById('loginEmail').value,
+                    document.getElementById('loginPassword').value
+                );
+            });
+            
+            // Signup form
+            signupForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await signup(
+                    document.getElementById('signupUsername').value,
+                    document.getElementById('signupEmail').value,
+                    document.getElementById('signupPassword').value
+                );
+            });
+            
+            // Logout
+            logoutBtn.addEventListener('click', logout);
+            
+            // Game controls
+            newGameBtn.addEventListener('click', () => {
+                setupPieces();
+                renderBoard();
+                gameStatus.textContent = 'White to move';
+                gameOver = false;
+                currentPlayer = 'white';
+                loading.style.display = 'none';
+            });
+            
+            undoBtn.addEventListener('click', () => {
+                // Simple undo - reset game
+                setupPieces();
+                renderBoard();
+                gameStatus.textContent = 'White to move';
+                gameOver = false;
+                currentPlayer = 'white';
+            });
+            
+            resignBtn.addEventListener('click', () => {
+                if (!gameOver) {
+                    gameOver = true;
+                    const winner = currentPlayer === 'white' ? 'Black' : 'White';
+                    gameStatus.textContent = `${winner} wins by resignation!`;
+                }
+            });
+            
+            // Difficulty buttons
+            document.querySelectorAll('[data-difficulty]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('[data-difficulty]').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    gameDifficulty = this.dataset.difficulty;
+                });
+            });
+            
+            // Time control buttons
+            document.querySelectorAll('[data-time]').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('[data-time]').forEach(b => {
+                        b.classList.remove('active');
+                    });
+                    this.classList.add('active');
+                    gameTime = parseInt(this.dataset.time) * 60;
+                });
+            });
+        }
+
+        // Auth functions
+        async function login(email, password) {
+            clearErrors();
+            loading.style.display = 'block';
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    showError('loginPasswordError', data.error || 'Login failed');
+                    loading.style.display = 'none';
+                    return;
+                }
+                
+                // Save token and user
+                localStorage.setItem('chess_token', data.token);
+                localStorage.setItem('chess_user', JSON.stringify(data.user));
+                currentUser = data.user;
+                
+                showGameScreen();
+                updateUserInfo();
+                setupPieces();
+                renderBoard();
+                
+            } catch (error) {
+                showError('loginPasswordError', 'Connection error. Please try again.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        async function signup(username, email, password) {
+            clearErrors();
+            loading.style.display = 'block';
+            
+            // Simple validation
+            if (password.length < 6) {
+                showError('signupPasswordError', 'Password must be at least 6 characters');
+                loading.style.display = 'none';
+                return;
+            }
+            
+            try {
+                const response = await fetch(`${API_BASE_URL}/signup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (!response.ok) {
+                    showError('signupEmailError', data.error || 'Signup failed');
+                    loading.style.display = 'none';
+                    return;
+                }
+                
+                // Auto login after signup
+                localStorage.setItem('chess_token', data.token);
+                localStorage.setItem('chess_user', JSON.stringify(data.user));
+                currentUser = data.user;
+                
+                showGameScreen();
+                updateUserInfo();
+                setupPieces();
+                renderBoard();
+                
+            } catch (error) {
+                showError('signupEmailError', 'Connection error. Please try again.');
+            } finally {
+                loading.style.display = 'none';
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('chess_token');
+            localStorage.removeItem('chess_user');
+            currentUser = null;
+            showWelcomeScreen();
+        }
+
+        function updateUserInfo() {
+            if (currentUser) {
+                username.textContent = currentUser.username;
+                userRating.textContent = currentUser.rating || '1500';
+                userAvatar.textContent = currentUser.username.charAt(0).toUpperCase();
+            }
+        }
+
+        // Chess game functions
+        function createBoard() {
+            chessboard.innerHTML = '';
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const square = document.createElement('div');
+                    square.className = `square ${(row + col) % 2 === 0 ? 'light' : 'dark'}`;
+                    square.dataset.row = row;
+                    square.dataset.col = col;
+                    
+                    square.addEventListener('click', () => handleSquareClick(row, col));
+                    
+                    chessboard.appendChild(square);
+                }
+            }
+        }
+
+        function setupPieces() {
+            boardState = Array(8).fill().map(() => Array(8).fill(null));
+            
+            // Pawns
+            for (let col = 0; col < 8; col++) {
+                boardState[6][col] = { type: 'pawn', color: 'white' };
+                boardState[1][col] = { type: 'pawn', color: 'black' };
+            }
+            
+            // Other pieces
+            const pieceOrder = ['rook', 'knight', 'bishop', 'queen', 'king', 'bishop', 'knight', 'rook'];
+            
+            for (let col = 0; col < 8; col++) {
+                boardState[7][col] = { type: pieceOrder[col], color: 'white' };
+                boardState[0][col] = { type: pieceOrder[col], color: 'black' };
+            }
+            
+            selectedPiece = null;
+            validMoves = [];
+            moveHistory = [];
+        }
+
+        function renderBoard() {
+            // Clear highlights
+            document.querySelectorAll('.square').forEach(square => {
+                square.classList.remove('selected', 'valid-move');
+            });
+            
+            // Render pieces
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const piece = boardState[row][col];
+                    const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+                    
+                    square.innerHTML = '';
+                    
+                    if (piece) {
+                        const pieceChar = getPieceChar(piece.type, piece.color);
+                        const pieceDiv = document.createElement('div');
+                        pieceDiv.className = `piece ${piece.color}`;
+                        pieceDiv.textContent = pieceChar;
+                        square.appendChild(pieceDiv);
+                    }
+                }
+            }
+            
+            // Highlight selected piece
+            if (selectedPiece) {
+                const { row, col } = selectedPiece.position;
+                const square = document.querySelector(`.square[data-row="${row}"][data-col="${col}"]`);
+                square.classList.add('selected');
+                
+                // Highlight valid moves
+                validMoves.forEach(move => {
+                    const moveSquare = document.querySelector(`.square[data-row="${move.row}"][data-col="${move.col}"]`);
+                    moveSquare.classList.add('valid-move');
+                });
+            }
+        }
+
+        function getPieceChar(type, color) {
+            const pieces = {
+                'king': color === 'white' ? '♔' : '♚',
+                'queen': color === 'white' ? '♕' : '♛',
+                'rook': color === 'white' ? '♖' : '♜',
+                'bishop': color === 'white' ? '♗' : '♝',
+                'knight': color === 'white' ? '♘' : '♞',
+                'pawn': color === 'white' ? '♙' : '♟'
+            };
+            return pieces[type] || '';
+        }
+
+        function handleSquareClick(row, col) {
+            if (gameOver || currentPlayer === 'black') return;
+            
+            const clickedPiece = boardState[row][col];
+            
+            if (selectedPiece) {
+                // Check if this is a valid move
+                const move = validMoves.find(m => m.row === row && m.col === col);
+                
+                if (move) {
+                    // Make the move
+                    makeMove(selectedPiece.position, { row, col });
+                    selectedPiece = null;
+                    validMoves = [];
+                    
+                    // Switch to computer's turn
+                    currentPlayer = 'black';
+                    gameStatus.textContent = 'Computer thinking...';
+                    loading.style.display = 'block';
+                    
+                    // Computer makes a move after delay
+                    setTimeout(computerMove, 1000);
+                    
+                    return;
+                }
+                
+                // Select different piece
+                if (clickedPiece && clickedPiece.color === 'white') {
+                    selectPiece(row, col, clickedPiece);
+                    return;
+                }
+                
+                // Deselect
+                selectedPiece = null;
+                validMoves = [];
+            }
+            
+            // Select white piece
+            if (clickedPiece && clickedPiece.color === 'white') {
+                selectPiece(row, col, clickedPiece);
+            }
+            
+            renderBoard();
+        }
+
+        function selectPiece(row, col, piece) {
+            selectedPiece = { position: { row, col }, piece };
+            validMoves = getValidMoves(piece, row, col);
+            renderBoard();
+        }
+
+        function getValidMoves(piece, row, col) {
+            const moves = [];
+            const directions = {
+                pawn: [[-1, 0], [-2, 0], [-1, -1], [-1, 1]],
+                knight: [[-2, -1], [-2, 1], [-1, -2], [-1, 2], [1, -2], [1, 2], [2, -1], [2, 1]],
+                king: [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]],
+                rook: [[-1, 0], [1, 0], [0, -1], [0, 1]],
+                bishop: [[-1, -1], [-1, 1], [1, -1], [1, 1]],
+                queen: [[-1, -1], [-1, 0], [-1, 1], [0, -1], [0, 1], [1, -1], [1, 0], [1, 1]]
+            };
+            
+            let pieceDirs = directions[piece.type] || [];
+            
+            if (piece.type === 'pawn') {
+                // White pawn moves (from bottom to top)
+                const startRow = 6;
+                const forwardOne = row - 1;
+                const forwardTwo = row - 2;
+                
+                // Move forward one
+                if (forwardOne >= 0 && !boardState[forwardOne][col]) {
+                    moves.push({ row: forwardOne, col });
+                    
+                    // Move forward two from start
+                    if (row === startRow && !boardState[forwardTwo][col]) {
+                        moves.push({ row: forwardTwo, col });
+                    }
+                }
+                
+                // Captures
+                if (col > 0 && boardState[forwardOne][col - 1] && boardState[forwardOne][col - 1].color === 'black') {
+                    moves.push({ row: forwardOne, col: col - 1 });
+                }
+                
+                if (col < 7 && boardState[forwardOne][col + 1] && boardState[forwardOne][col + 1].color === 'black') {
+                    moves.push({ row: forwardOne, col: col + 1 });
+                }
+            } else {
+                pieceDirs.forEach(([dr, dc]) => {
+                    let newRow = row + dr;
+                    let newCol = col + dc;
+                    
+                    if (piece.type === 'knight' || piece.type === 'king') {
+                        // Single moves for knight and king
+                        if (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                            const target = boardState[newRow][newCol];
+                            if (!target || target.color !== piece.color) {
+                                moves.push({ row: newRow, col: newCol });
+                            }
+                        }
+                    } else {
+                        // Sliding moves for rook, bishop, queen
+                        while (newRow >= 0 && newRow < 8 && newCol >= 0 && newCol < 8) {
+                            const target = boardState[newRow][newCol];
+                            
+                            if (!target) {
+                                moves.push({ row: newRow, col: newCol });
+                            } else {
+                                if (target.color !== piece.color) {
+                                    moves.push({ row: newRow, col: newCol });
+                                }
+                                break;
+                            }
+                            
+                            newRow += dr;
+                            newCol += dc;
+                        }
+                    }
+                });
+            }
+            
+            return moves;
+        }
+
+        function makeMove(from, to) {
+            const piece = boardState[from.row][from.col];
+            boardState[to.row][to.col] = piece;
+            boardState[from.row][from.col] = null;
+            
+            // Simple move notation
+            const files = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
+            const fromNotation = files[from.col] + (8 - from.row);
+            const toNotation = files[to.col] + (8 - to.row);
+            
+            moveHistory.push(`${fromNotation}-${toNotation}`);
+            
+            // Check for pawn promotion
+            if (piece.type === 'pawn' && to.row === 0) {
+                boardState[to.row][to.col].type = 'queen'; // Auto promote to queen
+            }
+            
+            // Check game status
+            checkGameStatus();
+        }
+
+        function computerMove() {
+            if (gameOver || currentPlayer !== 'black') return;
+            
+            // Get all possible black moves
+            const possibleMoves = [];
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const piece = boardState[row][col];
+                    if (piece && piece.color === 'black') {
+                        const moves = getValidMoves(piece, row, col);
+                        moves.forEach(move => {
+                            possibleMoves.push({
+                                from: { row, col },
+                                to: move
+                            });
+                        });
+                    }
+                }
+            }
+            
+            if (possibleMoves.length === 0) {
+                // Checkmate or stalemate
+                checkGameStatus();
+                loading.style.display = 'none';
+                return;
+            }
+            
+            // Choose move based on difficulty
+            let selectedMove;
+            if (gameDifficulty === 'easy') {
+                // Random move
+                selectedMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+            } else {
+                // Prefer captures
+                const captures = possibleMoves.filter(move => 
+                    boardState[move.to.row][move.to.col]?.color === 'white'
+                );
+                
+                if (captures.length > 0) {
+                    selectedMove = captures[Math.floor(Math.random() * captures.length)];
+                } else {
+                    selectedMove = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+                }
+            }
+            
+            // Make the move
+            makeMove(selectedMove.from, selectedMove.to);
+            
+            // Switch back to player
+            currentPlayer = 'white';
+            gameStatus.textContent = 'White to move';
+            loading.style.display = 'none';
+            renderBoard();
+            
+            // Check game status again
+            checkGameStatus();
+        }
+
+        function checkGameStatus() {
+            // Simple check for checkmate (just check if any white pieces can move)
+            let whiteHasMoves = false;
+            
+            for (let row = 0; row < 8; row++) {
+                for (let col = 0; col < 8; col++) {
+                    const piece = boardState[row][col];
+                    if (piece && piece.color === 'white') {
+                        if (getValidMoves(piece, row, col).length > 0) {
+                            whiteHasMoves = true;
+                            break;
+                        }
+                    }
+                }
+                if (whiteHasMoves) break;
+            }
+            
+            if (!whiteHasMoves) {
+                gameOver = true;
+                gameStatus.textContent = 'Checkmate! Black wins!';
+            }
+            
+            // Check for draw (simple 50 move rule simulation)
+            if (moveHistory.length >= 100) {
+                gameOver = true;
+                gameStatus.textContent = 'Draw by 50-move rule!';
+            }
+        }
+
+        // Initialize board
+        createBoard();
+    </script>
+</body>
+</html>
