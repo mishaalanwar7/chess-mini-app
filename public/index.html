@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chess Master - Telegram Mini App</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Welcome Screen -->
+        <div class="welcome-screen" id="welcomeScreen">
+            <div class="logo">
+                <div class="logo-icon">♔</div>
+                <h1>Chess Master</h1>
+                <p class="tagline">Play chess like a grandmaster. Right in Telegram.</p>
+            </div>
+            <button class="btn btn-primary" id="playNowBtn">Play Now</button>
+            <button class="btn btn-secondary" id="leaderboardBtn">View Leaderboard</button>
+        </div>
+
+        <!-- Login Screen -->
+        <div class="auth-screen" id="loginScreen">
+            <div class="auth-card">
+                <h2 class="auth-title">Login</h2>
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label for="loginEmail">Email</label>
+                        <input type="email" id="loginEmail" placeholder="your@email.com" required>
+                        <div class="error-message" id="loginEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Password</label>
+                        <input type="password" id="loginPassword" placeholder="••••••••" required>
+                        <div class="error-message" id="loginPasswordError"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Login</button>
+                </form>
+                <div class="auth-footer">
+                    Don't have an account? <a href="#" id="goToSignup">Sign up</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Signup Screen -->
+        <div class="auth-screen" id="signupScreen">
+            <div class="auth-card">
+                <h2 class="auth-title">Create Account</h2>
+                <form id="signupForm">
+                    <div class="form-group">
+                        <label for="signupUsername">Username</label>
+                        <input type="text" id="signupUsername" placeholder="chess_player" required>
+                        <div class="error-message" id="signupUsernameError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupEmail">Email</label>
+                        <input type="email" id="signupEmail" placeholder="your@email.com" required>
+                        <div class="error-message" id="signupEmailError"></div>
+                    </div>
+                    <div class="form-group">
+                        <label for="signupPassword">Password</label>
+                        <input type="password" id="signupPassword" placeholder="••••••••" required>
+                        <div class="error-message" id="signupPasswordError"></div>
+                    </div>
+                    <button type="submit" class="btn btn-primary btn-block">Create Account</button>
+                </form>
+                <div class="auth-footer">
+                    Already have an account? <a href="#" id="goToLogin">Login</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Game Screen -->
+        <div class="game-screen" id="gameScreen">
+            <!-- Header -->
+            <div class="header">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">U</div>
+                    <div>
+                        <div class="username" id="username">User</div>
+                        <div class="user-rating">Rating: <span id="userRating">1500</span></div>
+                    </div>
+                </div>
+                <button class="btn btn-danger" id="logoutBtn">Logout</button>
+            </div>
+
+            <!-- Game Settings -->
+            <div class="game-settings">
+                <h3>Game Settings</h3>
+                <div class="settings-section">
+                    <div class="settings-label">Difficulty:</div>
+                    <div class="settings-options">
+                        <button class="setting-btn active" data-difficulty="easy">Easy</button>
+                        <button class="setting-btn" data-difficulty="medium">Medium</button>
+                        <button class="setting-btn" data-difficulty="hard">Hard</button>
+                        <button class="setting-btn" data-difficulty="master">Master</button>
+                    </div>
+                </div>
+                <div class="settings-section">
+                    <div class="settings-label">Time Control:</div>
+                    <div class="settings-options">
+                        <button class="setting-btn active" data-time="10">10 min</button>
+                        <button class="setting-btn" data-time="5">5 min</button>
+                        <button class="setting-btn" data-time="3">3 min</button>
+                        <button class="setting-btn" data-time="1">1 min</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Chess Board -->
+            <div class="board-container">
+                <div class="board" id="chessboard">
+                    <!-- Board will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Game Status -->
+            <div class="game-status">
+                <div id="gameStatusText">White to move</div>
+                <div class="turn-indicator">
+                    <span class="turn-piece" id="turnPiece">♔</span>
+                    <span id="turnText">White's turn</span>
+                </div>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <div>Computer thinking...</div>
+            </div>
+
+            <!-- Game Controls -->
+            <div class="game-controls">
+                <button class="btn btn-secondary" id="undoBtn">
+                    <span class="btn-icon">↩️</span> Undo
+                </button>
+                <button class="btn btn-primary" id="newGameBtn">
+                    <span class="btn-icon">🔄</span> New Game
+                </button>
+                <button class="btn btn-danger" id="resignBtn">
+                    <span class="btn-icon">🏳️</span> Resign
+                </button>
+            </div>
+
+            <!-- Move History -->
+            <div class="move-history">
+                <h4>Move History</h4>
+                <div class="move-list" id="moveList">
+                    <!-- Moves will be added here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Chess Master © 2024 • Play chess in Telegram
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
